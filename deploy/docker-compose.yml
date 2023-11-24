@@ -1,0 +1,58 @@
+version: '3.9'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile
+      target: prod
+    image: document_creation_task2:${DOCUMENT_CREATION_TASK2_VERSION:-latest}
+    restart: always
+    env_file:
+    - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DOCUMENT_CREATION_TASK2_HOST: 0.0.0.0
+      DOCUMENT_CREATION_TASK2_DB_HOST: document_creation_task2-db
+      DOCUMENT_CREATION_TASK2_DB_PORT: 5432
+      DOCUMENT_CREATION_TASK2_DB_USER: document_creation_task2
+      DOCUMENT_CREATION_TASK2_DB_PASS: document_creation_task2
+      DOCUMENT_CREATION_TASK2_DB_BASE: document_creation_task2
+
+  db:
+    image: postgres:13.8-bullseye
+    hostname: document_creation_task2-db
+    environment:
+      POSTGRES_PASSWORD: "document_creation_task2"
+      POSTGRES_USER: "document_creation_task2"
+      POSTGRES_DB: "document_creation_task2"
+    volumes:
+    - document_creation_task2-db-data:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: pg_isready -U document_creation_task2
+      interval: 2s
+      timeout: 3s
+      retries: 40
+
+  migrator:
+    image: document_creation_task2:${DOCUMENT_CREATION_TASK2_VERSION:-latest}
+    restart: "no"
+    command: alembic upgrade head
+    environment:
+      DOCUMENT_CREATION_TASK2_DB_HOST: document_creation_task2-db
+      DOCUMENT_CREATION_TASK2_DB_PORT: 5432
+      DOCUMENT_CREATION_TASK2_DB_USER: document_creation_task2
+      DOCUMENT_CREATION_TASK2_DB_PASS: document_creation_task2
+      DOCUMENT_CREATION_TASK2_DB_BASE: document_creation_task2
+    depends_on:
+      db:
+        condition: service_healthy
+
+
+
+volumes:
+  document_creation_task2-db-data:
+    name: document_creation_task2-db-data

@@ -1,0 +1,79 @@
+name: Testing document_creation_task2
+
+on: push
+
+jobs:
+  black:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+    - name: Install deps
+      uses: knowsuchagency/poetry-install@v1
+      env:
+        POETRY_VIRTUALENVS_CREATE: false
+    - name: Run black check
+      run: poetry run black --check .
+  flake8:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+    - name: Install deps
+      uses: knowsuchagency/poetry-install@v1
+      env:
+        POETRY_VIRTUALENVS_CREATE: false
+    - name: Run flake8 check
+      run: poetry run flake8 --count .
+  mypy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+    - name: Install deps
+      uses: knowsuchagency/poetry-install@v1
+      env:
+        POETRY_VIRTUALENVS_CREATE: false
+    - name: Run mypy check
+      run: poetry run mypy .
+  pytest:
+    runs-on: ubuntu-latest
+    services:
+
+      document_creation_task2-db:
+        image: postgres:13.8-bullseye
+        env:
+          POSTGRES_PASSWORD: document_creation_task2
+          POSTGRES_USER: document_creation_task2
+          POSTGRES_DB: document_creation_task2
+        options: >-
+          --health-cmd="pg_isready"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+        ports:
+        - 5432:5432
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+    - name: Install deps
+      uses: knowsuchagency/poetry-install@v1
+      env:
+        POETRY_VIRTUALENVS_CREATE: false
+    - name: Run pytest check
+      run: poetry run pytest -vv --cov="document_creation_task2" .
+      env:
+        DOCUMENT_CREATION_TASK2_HOST: "0.0.0.0"
+        DOCUMENT_CREATION_TASK2_DB_HOST: localhost
