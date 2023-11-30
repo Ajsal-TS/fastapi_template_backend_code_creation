@@ -43,7 +43,7 @@ But you have to rebuild image every time you modify `poetry.lock` or `pyproject.
 docker-compose -f deploy/docker-compose.yml --project-directory . build
 ```
 
-## Project
+## Project structure.
 
 ```bash
 $ tree "document_creation_task2"
