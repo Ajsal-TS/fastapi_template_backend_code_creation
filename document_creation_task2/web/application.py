@@ -5,6 +5,7 @@ from fastapi.responses import UJSONResponse
 
 from document_creation_task2.logging import configure_logging
 from document_creation_task2.web.api.router import api_router
+from document_creation_task2.web.api.users.views import router
 from document_creation_task2.web.lifetime import (
     register_shutdown_event,
     register_startup_event,
@@ -35,5 +36,5 @@ def get_app() -> FastAPI:
 
     # Main router for the API.
     app.include_router(router=api_router, prefix="/api")
-
+    app.include_router(router=router, prefix="/api")
     return app

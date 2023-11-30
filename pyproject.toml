@@ -23,6 +23,8 @@ alembic = "^1.11.1"
 asyncpg = {version = "^0.28.0", extras = ["sa"]}
 httptools = "^0.6.0"
 loguru = "^0.7.0"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = "^1.7.4"
 
 
 [tool.poetry.dev-dependencies]
