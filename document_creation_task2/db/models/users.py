@@ -15,6 +15,7 @@ class UserDet(Bases):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     password = Column(String)
+    email = Column(String)
     tok = relationship("Token", back_populates="user_det")
     tasks = relationship("Task", back_populates="user_dets")
 
